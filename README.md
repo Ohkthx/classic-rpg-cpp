@@ -23,4 +23,6 @@ make
 
 ## Algorithms and Elements
 
-None at this time.
+### Terrain Generation
+
+- Wave Function Collapse (Simple Tiled Model)

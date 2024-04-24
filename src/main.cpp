@@ -1,6 +1,7 @@
+#include "examples/examples.hpp"
 #include <iostream>
 
 int main(int argc, char const *argv[]) {
-  std::cout << "Hello World!" << std::endl;
+  wfcExample();
   return 0;
 }
