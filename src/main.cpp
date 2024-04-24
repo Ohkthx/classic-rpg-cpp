@@ -1,7 +1,13 @@
 #include "examples/examples.hpp"
-#include <iostream>
+
+const int FRAMERATE = 60;
 
 int main(int argc, char const *argv[]) {
-  wfcExample();
+  // Test the tick controller @60 ticks per second.
+  tickExample(1000 / 60);
+
+  // Test the Wave Function Collapse algorithm.
+  // wfcExample(25, 25);
+
   return 0;
 }

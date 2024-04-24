@@ -23,6 +23,10 @@ make
 
 ## Algorithms and Elements
 
+### Controllers
+
+- Game Tick (Tick Controller)
+
 ### Terrain Generation
 
 - Wave Function Collapse (Simple Tiled Model)

@@ -1,5 +1,4 @@
 #include "../generation/terrain/wfc.hpp"
-#include "examples.hpp"
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
@@ -137,7 +136,7 @@ void animateScroll(std::vector<std::vector<wfc::Cell<int>>> &wave, bool debug,
   }
 }
 
-void wfcExample() {
+void wfcExample(int height, int width) {
   const int G = 20;
   const int C = 100;
   const int CI = C * 10;
@@ -175,7 +174,7 @@ void wfcExample() {
   rules.validate();
 
   std::mt19937 rng(std::random_device{}());
-  int height = 55, width = 160, delay = 100;
+  int delay = 100;
   bool debug = false, clear = true;
 
   wfc::WaveFunctionCollapse<int> wfc(rng, height, width, rules, true);
