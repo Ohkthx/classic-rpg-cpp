@@ -45,21 +45,21 @@ public:
   }
 };
 
+template <typename T> using Wave = std::vector<std::vector<Cell<T>>>;
+
 template <typename T> class WaveFunctionCollapse {
 public:
-  using Wave = std::vector<std::vector<Cell<T>>>;
-
   WaveFunctionCollapse(std::mt19937 &rng, int height, int width,
                        Ruleset<T> &rules, bool wrap)
       : rng(rng), wrap(wrap), rules(rules) {
 
     // Initialize the wave.
     std::vector<T> states = rules.allRules();
-    wave = Wave(height, std::vector<Cell<T>>(width, Cell(states)));
+    wave = Wave<T>(height, std::vector<Cell<T>>(width, Cell(states)));
   }
 
   // Obtains the current status of the wave.
-  Wave getWave() const { return wave; }
+  Wave<T> getWave() const { return wave; }
 
   // Processes the next iteration of the WFC algorithm.
   bool next() {
@@ -92,7 +92,7 @@ public:
 private:
   std::mt19937 rng; // Used to have consistent randomization.
   bool wrap = false, done = false;
-  Wave wave;        // Wave / Map / Grid
+  Wave<T> wave;     // Wave / Map / Grid
   Ruleset<T> rules; // Rules and constraints for propagation.
   std::stack<std::pair<int, int>> to_proc; // (x, y) that need propagated.
 

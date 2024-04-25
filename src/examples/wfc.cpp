@@ -9,7 +9,7 @@
 #include <thread>
 #include <vector>
 
-std::string getSymbol(int value) {
+std::string getWFCSymbol(int value) {
   switch (value) {
   case 0:
     return "\033[32m░";
@@ -85,7 +85,7 @@ void print(std::vector<std::vector<wfc::Cell<int>>> &wave, bool debug,
       } else if (!cell.isCollapsed()) {
         output << std::setw(2) << std::left << getColorEntropy(cell.entropy());
       } else {
-        output << getSymbol(cell.state()) << "";
+        output << getWFCSymbol(cell.state()) << "";
       }
 
       // Reset the terminal styles.
@@ -136,7 +136,7 @@ void animateScroll(std::vector<std::vector<wfc::Cell<int>>> &wave, bool debug,
   }
 }
 
-void wfcExample(int height, int width) {
+wfc::Wave<int> wfcExample(int height, int width, bool display, bool animate) {
   const int G = 20;
   const int C = 100;
   const int CI = C * 10;
@@ -178,7 +178,6 @@ void wfcExample(int height, int width) {
   bool debug = false, clear = true;
 
   wfc::WaveFunctionCollapse<int> wfc(rng, height, width, rules, true);
-  auto wave = wfc.getWave();
 
   // Collapse the entire wave.
   while (!wfc.isCollapsed()) {
@@ -186,6 +185,12 @@ void wfcExample(int height, int width) {
   }
 
   // Update the wave animation.
-  wave = wfc.getWave();
-  animateScroll(wave, debug, clear, 3000000, delay);
+  auto wave = wfc.getWave();
+  if (display && animate) {
+    animateScroll(wave, debug, clear, 30000, delay);
+  } else if (display) {
+    print(wave, false, false, 0);
+  }
+
+  return wave;
 }

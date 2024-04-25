@@ -1,11 +1,15 @@
 #ifndef _ALGO_EXAMPLES_HPP
 #define _ALGO_EXAMPLES_HPP
 
+#include "../generation/terrain/wfc.hpp"
 #include "../tick.hpp"
 #include <iostream>
 
 // Demonstrates how to initialize and visualize the WFC algorithm.
-void wfcExample(int height, int width);
+wfc::Wave<int> wfcExample(int height, int width, bool display, bool animate);
+
+// Demonstrates how to initialize and visualize the Tileset w/ WFC algorithm.
+void tilesetExample(wfc::Wave<int> &wave);
 
 // Demonstrates how to use the tick mechanic.
 void tickExample(std::size_t tick_interval) {
