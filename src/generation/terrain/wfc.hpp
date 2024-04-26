@@ -61,6 +61,13 @@ public:
   // Obtains the current status of the wave.
   Wave<T> getWave() const { return wave; }
 
+  // Collapses the entire wave.
+  void collapse() {
+    while (!isCollapsed()) {
+      next();
+    }
+  }
+
   // Processes the next iteration of the WFC algorithm.
   bool next() {
     std::optional<std::pair<int, int>> lowest_entropy = getMinEntropy();
@@ -73,7 +80,7 @@ public:
     int x = lowest_entropy->first;
     int y = lowest_entropy->second;
 
-    collapse(x, y);
+    collapseCell(x, y);
     to_proc.push({x, y});
 
     // Propagate the changes from the collapse to neighboring cells.
@@ -97,7 +104,7 @@ private:
   std::stack<std::pair<int, int>> to_proc; // (x, y) that need propagated.
 
   // Collapses cell (x, y).
-  void collapse(int x, int y) {
+  void collapseCell(int x, int y) {
     Cell<T> &cell = wave[y][x];
     if (cell.isCollapsed()) {
       return;

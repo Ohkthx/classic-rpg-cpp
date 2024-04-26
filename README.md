@@ -23,6 +23,10 @@ make
 
 ## Algorithms and Elements
 
+### Pathfinding
+
+- A\*
+
 ### Controllers
 
 - Game Tick (Tick Controller)

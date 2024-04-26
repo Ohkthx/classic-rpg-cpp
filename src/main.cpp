@@ -12,5 +12,8 @@ int main(int argc, char const *argv[]) {
   // Test the Tileset + Wave Function Collapse algorithm.
   tilesetExample(wave);
 
+  // A* Pathfinding algorithm. 'true' for allow diagonal movement.
+  astarExample(25, 25, false);
+
   return 0;
 }
