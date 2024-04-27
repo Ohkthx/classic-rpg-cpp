@@ -1,6 +1,7 @@
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
+#include "map/tile.hpp"
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -8,7 +9,7 @@
 
 class TileExpander {
 public:
-  static const int tile_dimensions = 3; // nxn dimensions of each expanded tile.
+  static const int DIMENSIONS = 3; // nxn dimensions of each expanded tile.
 
   // Converts a single tile into an nxn grid of tiles, randomly selecting a
   // configuration if multiple exist.
@@ -72,7 +73,7 @@ private:
   // directions.
   static void rotate(TileExpansion &tile, int rotations) {
     int n = tile.size();
-    if (n != tile_dimensions || tile[0].size() != tile_dimensions) {
+    if (n != DIMENSIONS || tile[0].size() != DIMENSIONS) {
       throw new std::runtime_error(
           "Incorrect tileset definition, size mismatch.");
     } else if (rotations % 4 == 0) {

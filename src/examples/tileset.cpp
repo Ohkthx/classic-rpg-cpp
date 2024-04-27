@@ -23,10 +23,9 @@ void tilesetExample(wfc::Wave<int> &wave) {
   std::mt19937 rng(std::random_device{}());
 
   // Print tiles in a grid format.
-  for (int y = 0; y < wave.size(); ++y) {
-    // Each tile is 3x3, hence 3 rows per layer.
-    for (int layer = 0; layer < TileExpander::tile_dimensions; ++layer) {
-      for (int x = 0; x < wave[y].size(); ++x) {
+  for (int y = 0; y < wave.size(); y++) {
+    for (int layer = 0; layer < TileExpander::DIMENSIONS; layer++) {
+      for (int x = 0; x < wave[y].size(); x++) {
         int state = wave[y][x].state();
         std::vector<std::vector<int>> tile = TileExpander::expand(rng, state);
 
