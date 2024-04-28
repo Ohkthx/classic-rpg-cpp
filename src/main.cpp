@@ -38,17 +38,21 @@ int main(int argc, char const *argv[]) {
   TickController tick_controller(1000 / FRAMERATE);
 
   while (true) {
+    bool changes = false;
     Input input = Input::check(false);
+
     if (input.quit) {
       break;
     } else if (!input.movement_offset.isOrigin()) {
       // Input moved in a direction.
       Vec2i temp = player + input.movement_offset;
-      if ((!map.inBounds(temp) || (map.data[temp.y][temp.x] != nullptr &&
-                                   map.data[temp.y][temp.x]->isOccupied()))) {
+      auto tile = map.at(temp.x, temp.y);
+      if ((!map.inBounds(temp.x, temp.y) ||
+           (tile != nullptr && tile->isOccupied()))) {
         // Location is blocked here.
         rhs.add(color::Foreground::RED, color::Style::BOLD, "location blocked");
       } else {
+        changes = true;
         player = temp;
         if (input.movement_offset.x > 0) {
           rhs.add("moved east");
@@ -59,9 +63,11 @@ int main(int argc, char const *argv[]) {
         } else if (input.movement_offset.y < 0) {
           rhs.add("moved north");
         }
-
-        camera.draw(map, player, rhs.getText(), bhs);
       }
+    }
+
+    if (changes) {
+      camera.draw(map, player, rhs.getText(), bhs);
     }
 
     tick_controller.tick();

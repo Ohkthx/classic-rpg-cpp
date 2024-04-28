@@ -52,9 +52,10 @@ void Camera::draw(const MapData &map, const Vec2i &center,
   setViewSize();
   resetCursor();
 
-  std::size_t rhs_size = rhs_log.size();
   int map_width = getMapWidth(rhs_log.size());
   int map_height = getMapHeight(bottom_log.size()) - 1; // -1 for input.
+  std::size_t rhs_size = rhs_log.size();
+  std::size_t rhs_offset = rhs_size > map_height ? (rhs_size - map_height) : 0;
 
   // Gets starting position for the map based on position offset.
   int start_x = center.x - map_width / 2;
@@ -65,8 +66,8 @@ void Camera::draw(const MapData &map, const Vec2i &center,
   output.reserve(width * (map_height + bottom_log.size() + 2));
 
   // Draw the map and optionally the RHS text area.
-  for (int y = 0; y < map_height; ++y) {
-    for (int x = 0; x < width; ++x) {
+  for (int y = 0; y < map_height; y++) {
+    for (int x = 0; x < width; x++) {
       if (rhs_size > 0 && x >= map_width) {
         // Handle RHS text area.
         if (x == map_width) {
@@ -74,8 +75,7 @@ void Camera::draw(const MapData &map, const Vec2i &center,
         }
 
         // Calculate the RHS text line to potentially display at this row.
-        std::size_t line =
-            y + (rhs_size > map_height ? (rhs_size - map_height) : 0);
+        std::size_t line = y + rhs_offset;
 
         // Print RHS text if this row corresponds to a line in the vector.
         if (line < rhs_size) {
@@ -89,12 +89,13 @@ void Camera::draw(const MapData &map, const Vec2i &center,
         int map_x = start_x + x;
         int map_y = start_y + y;
 
-        if (map.inBounds({map_x, map_y})) {
+        if (map.inBounds(map_x, map_y)) {
+          auto tile = map.at(map_x, map_y);
           if (map_x == center.x && map_y == center.y) {
             // Draws the central symbol.
             output += color::stylize("@", color::Foreground::YELLOW);
-          } else if (map.data[map_y][map_x] != nullptr) {
-            output += map.data[map_y][map_x]->toString();
+          } else if (tile != nullptr) {
+            output += tile->toString();
           } else {
             output += " ";
           }
