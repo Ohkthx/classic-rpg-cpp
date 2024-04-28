@@ -2,6 +2,7 @@
 #define _MAP_DATA_HPP
 
 #include "../generation/terrain/wfc.hpp"
+#include "../pathfinding/util.hpp"
 #include "../tileset.hpp"
 #include "tile.hpp"
 #include <memory>
@@ -21,6 +22,15 @@ public:
 
     // Apply the wave to the map.
     applyWave(wfc.getWave());
+  }
+
+  int width() const { return data[0].size(); }
+  int height() const { return data.size(); }
+
+  // Checks if the given position is within bounds.
+  bool inBounds(const Vec2i &position) const {
+    return position.x >= 0 && position.x < width() && position.y >= 0 &&
+           position.y < height();
   }
 
 private:

@@ -1,6 +1,7 @@
 #ifndef _ASTAR_HPP
 #define _ASTAR_HPP
 
+#include "util.hpp"
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -9,29 +10,6 @@
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
-
-namespace pathfind {
-
-struct Vec2i {
-  int x, y;
-
-  Vec2i operator+(const Vec2i &other) const {
-    return {x + other.x, y + other.y};
-  }
-  friend bool operator==(const Vec2i &a, const Vec2i &b) {
-    return a.x == b.x && a.y == b.y;
-  }
-  friend bool operator!=(const Vec2i &a, const Vec2i &b) { return !(a == b); }
-};
-} // namespace pathfind
-
-namespace std {
-template <> struct hash<pathfind::Vec2i> {
-  size_t operator()(const pathfind::Vec2i &v) const {
-    return std::hash<int>()(v.x * 73856093) ^ std::hash<int>()(v.y * 19349663);
-  }
-};
-} // namespace std
 
 namespace pathfind {
 

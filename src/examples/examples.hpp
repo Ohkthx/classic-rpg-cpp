@@ -38,7 +38,7 @@ void astarExample(int height, int width, bool allow_diagonal) {
   grid.resize(height, std::vector<Cell>(width));
 
   pathfind::AStar<Cell> astar(grid, allow_diagonal, false);
-  std::vector<pathfind::Vec2i> path = astar.findPath({0, 0}, {9, 9});
+  std::vector<Vec2i> path = astar.findPath({0, 0}, {9, 9});
 
   // Worst case scenario.
   if (path.empty()) {

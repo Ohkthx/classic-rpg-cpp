@@ -1,13 +1,18 @@
 #include "examples/examples.hpp"
+#include "input.hpp"
 #include "map/map.hpp"
-#include "ui/terminal.hpp"
+#include "pathfinding/astar.hpp"
+#include "pathfinding/util.hpp"
+#include "ui/camera.hpp"
+#include "ui/color.hpp"
+#include "util/log.hpp"
 #include <random>
 
-const int FRAMERATE = 60;
+const int FRAMERATE = 30;
 
 int main(int argc, char const *argv[]) {
-  // Test the tick controller @60 ticks per second.
-  // tickExample(1000 / 60);
+  // Test the tick controller @30 ticks per second.
+  // tickExample(1000 / FRAMERATE);
 
   // Test the Wave Function Collapse algorithm.
   // auto wave = wfcExample(25, 25, true, false);
@@ -18,11 +23,49 @@ int main(int argc, char const *argv[]) {
   // A* Pathfinding algorithm. 'true' for allow diagonal movement.
   // astarExample(25, 25, false);
 
-  std::mt19937 rng(std::random_device{}());
-  MapData map(rng, 20, 40);
+  int width = 128, height = 128;
+  Vec2i player = {width / 2, height / 2};
 
-  Terminal terminal;
-  terminal.draw(map);
+  std::mt19937 rng(std::random_device{}());
+  MapData map(rng, height, width);
+  Log rhs = Log(100);
+  std::vector<LogEntry> bhs;
+
+  // Camera, controls the relative map positioning and optional text.
+  Camera camera;
+  camera.draw(map, player, rhs.getText(), bhs);
+
+  TickController tick_controller(1000 / FRAMERATE);
+
+  while (true) {
+    Input input = Input::check(false);
+    if (input.quit) {
+      break;
+    } else if (!input.movement_offset.isOrigin()) {
+      // Input moved in a direction.
+      Vec2i temp = player + input.movement_offset;
+      if ((!map.inBounds(temp) || (map.data[temp.y][temp.x] != nullptr &&
+                                   map.data[temp.y][temp.x]->isOccupied()))) {
+        // Location is blocked here.
+        rhs.add(color::Foreground::RED, color::Style::BOLD, "location blocked");
+      } else {
+        player = temp;
+        if (input.movement_offset.x > 0) {
+          rhs.add("moved east");
+        } else if (input.movement_offset.x < 0) {
+          rhs.add("moved west");
+        } else if (input.movement_offset.y > 0) {
+          rhs.add("moved south");
+        } else if (input.movement_offset.y < 0) {
+          rhs.add("moved north");
+        }
+
+        camera.draw(map, player, rhs.getText(), bhs);
+      }
+    }
+
+    tick_controller.tick();
+  }
 
   return 0;
 }
