@@ -7,6 +7,8 @@
 struct Vec2i {
   int x, y;
 
+  Vec2i(int x, int y) : x(x), y(y) {}
+
   Vec2i operator+(const Vec2i &other) const {
     return {x + other.x, y + other.y};
   }

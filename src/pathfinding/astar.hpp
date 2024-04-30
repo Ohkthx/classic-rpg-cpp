@@ -13,9 +13,24 @@
 
 namespace pathfind {
 
+// Define a trait to check the occupancy status.
+template <typename T> struct is_occupiable_impl {
+  static bool check(const T &t) { return t.isOccupied(); }
+};
+
+// Specialization for pointer types.
+template <typename T> struct is_occupiable_impl<T *> {
+  static bool check(const T *t) { return t->isOccupied(); }
+};
+
+// Specialization for smart pointer types like std::shared_ptr.
+template <typename T> struct is_occupiable_impl<std::shared_ptr<T>> {
+  static bool check(const std::shared_ptr<T> &t) { return t->isOccupied(); }
+};
+
 template <typename T>
 concept Occupiable = requires(T t) {
-  { t.isOccupied() } -> std::convertible_to<bool>;
+  { is_occupiable_impl<T>::check(t) } -> std::convertible_to<bool>;
 };
 
 // Heuristics used to calculate cost / distance differently.
@@ -111,7 +126,8 @@ public:
 
       // Explore the neighbors of the current node.
       for (Vec2i neighbor_pos : getNeighbors(current->position)) {
-        if (grid[neighbor_pos.y][neighbor_pos.x].isOccupied()) {
+        if (is_occupiable_impl<T>::check(
+                grid[neighbor_pos.y][neighbor_pos.x])) {
           continue;
         }
 

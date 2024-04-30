@@ -30,7 +30,7 @@ void astarExample(int height, int width, bool allow_diagonal) {
   // Used to represent each cell, `isOccupied()` is required for A*.
   struct Cell {
     bool state = false;
-    bool isOccupied() { return state; }
+    bool isOccupied() const { return state; }
   };
 
   // Create and pathfind.

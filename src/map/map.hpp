@@ -2,10 +2,12 @@
 #define _MAP_DATA_HPP
 
 #include "../generation/terrain/wfc.hpp"
+#include "../pathfinding/astar.hpp"
 #include "../pathfinding/util.hpp"
 #include "../tileset.hpp"
 #include "tile.hpp"
 #include <memory>
+#include <queue>
 #include <random>
 #include <vector>
 
@@ -40,6 +42,51 @@ public:
   // Check if the given position is within bounds.
   bool inBounds(int x, int y) const {
     return x >= 0 && x < _width && y >= 0 && y < _height;
+  }
+
+  // Obtains a random position that is not occupied.
+  Vec2i getRandomSpawn() {
+    std::uniform_int_distribution<int> dist(0, data.size() - 1);
+
+    while (true) {
+      int position = dist(rng);
+      if (!data[position]->isOccupied()) {
+        // Convert position into coordinates.
+        int x = position % _width;
+        int y = position / _width;
+        return {x, y};
+      }
+    }
+  }
+
+  // Obtains the path from the source to destination.
+  std::queue<Vec2i> pathfind(Vec2i src, Vec2i dest) {
+    // Check bounds and ensure movement is possible.
+    if (!inBounds(src.x, src.y) || !inBounds(dest.x, dest.y) ||
+        at(src.x, src.y)->isOccupied() || at(dest.x, dest.y)->isOccupied()) {
+      return std::queue<Vec2i>();
+    }
+
+    // Create a grid the A* can use.
+    std::vector<std::vector<std::shared_ptr<Tile>>> grid(
+        _height, std::vector<std::shared_ptr<Tile>>(_width));
+    for (int y = 0; y < _height; ++y) {
+      for (int x = 0; x < _width; ++x) {
+        grid[y][x] = at(x, y);
+      }
+    }
+
+    // Find the path between the source and destination.
+    pathfind::AStar<std::shared_ptr<Tile>> astar(grid, false);
+    std::vector<Vec2i> path_vec = astar.findPath(src, dest);
+
+    // Find the path using the A* algorithm.
+    std::queue<Vec2i> path_queue;
+    for (auto &step : path_vec) {
+      path_queue.push(step);
+    }
+
+    return path_queue;
   }
 
 private:

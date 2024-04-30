@@ -6,30 +6,22 @@
 #include "ui/camera.hpp"
 #include "ui/color.hpp"
 #include "util/log.hpp"
+#include <format>
+#include <queue>
 #include <random>
 
-const int FRAMERATE = 30;
+const int FRAMERATE = 20;
 
 int main(int argc, char const *argv[]) {
-  // Test the tick controller @30 ticks per second.
-  // tickExample(1000 / FRAMERATE);
-
-  // Test the Wave Function Collapse algorithm.
-  // auto wave = wfcExample(25, 25, true, false);
-
-  // Test the Tileset + Wave Function Collapse algorithm.
-  // tilesetExample(wave);
-
-  // A* Pathfinding algorithm. 'true' for allow diagonal movement.
-  // astarExample(25, 25, false);
-
-  int width = 128, height = 128;
-  Vec2i player = {width / 2, height / 2};
-
-  std::mt19937 rng(std::random_device{}());
-  MapData map(rng, height, width);
   Log rhs = Log(100);
   std::vector<LogEntry> bhs;
+  int width = 128, height = 128;
+
+  // Creates the map.
+  std::mt19937 rng(std::random_device{}());
+  MapData map(rng, height, width);
+  Vec2i player = map.getRandomSpawn();
+  std::queue<Vec2i> path;
 
   // Camera, controls the relative map positioning and optional text.
   Camera camera;
@@ -41,9 +33,22 @@ int main(int argc, char const *argv[]) {
     bool changes = false;
     Input input = Input::check(false);
 
+    if (path.empty()) {
+      // Creates a random location within 50 tiles of the player to move to.
+      std::uniform_int_distribution<int> dist(-50, 50);
+      Vec2i target = Vec2i(dist(rng), dist(rng)) + player;
+      path = map.pathfind(player, target);
+    }
+
     if (input.quit) {
       break;
+    } else if (!path.empty()) {
+      changes = true;
+      player = path.front(); // Update player location to next position.
+      path.pop();            // Ensure we remove the location we moved to.
     } else if (!input.movement_offset.isOrigin()) {
+      changes = true;
+
       // Input moved in a direction.
       Vec2i temp = player + input.movement_offset;
       auto tile = map.at(temp.x, temp.y);
@@ -52,7 +57,6 @@ int main(int argc, char const *argv[]) {
         // Location is blocked here.
         rhs.add(color::Foreground::RED, color::Style::BOLD, "location blocked");
       } else {
-        changes = true;
         player = temp;
         if (input.movement_offset.x > 0) {
           rhs.add("moved east");
