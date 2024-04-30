@@ -34,31 +34,28 @@ void astarExample(int height, int width, bool allow_diagonal) {
   };
 
   // Create and pathfind.
-  std::vector<std::vector<Cell>> grid;
-  grid.resize(height, std::vector<Cell>(width));
+  std::vector<std::vector<Cell>> data(height, std::vector<Cell>(width));
+  auto grid = std::make_unique<pathfind::Grid2D<Cell>>(data);
+  pathfind::AStar<Cell> astar(std::move(grid), allow_diagonal);
+  std::vector<Vec2i> path = astar.findPath({0, 0}, {height - 1, width - 1});
 
-  pathfind::AStar<Cell> astar(grid, allow_diagonal, false);
-  std::vector<Vec2i> path = astar.findPath({0, 0}, {9, 9});
-
-  // Worst case scenario.
+  // Displaying results.
   if (path.empty()) {
     std::cout << "No path found." << std::endl;
   } else {
     for (const auto &p : path) {
       std::cout << "(" << p.x << ", " << p.y << ")  ";
     }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
 
   // Create a display grid.
   std::vector<std::vector<char>> display(
       astar.getHeight(), std::vector<char>(astar.getWidth(), '.'));
 
   // Mark the path on the display grid.
-  if (!path.empty()) {
-    for (auto node : path) {
-      display[node.y][node.x] = '*';
-    }
+  for (auto node : path) {
+    display[node.y][node.x] = '*';
   }
 
   for (int y = 0; y < astar.getHeight(); ++y) {

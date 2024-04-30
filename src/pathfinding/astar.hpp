@@ -1,6 +1,7 @@
 #ifndef _ASTAR_HPP
 #define _ASTAR_HPP
 
+#include "grid.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <functional>
@@ -12,26 +13,6 @@
 #include <vector>
 
 namespace pathfind {
-
-// Define a trait to check the occupancy status.
-template <typename T> struct is_occupiable_impl {
-  static bool check(const T &t) { return t.isOccupied(); }
-};
-
-// Specialization for pointer types.
-template <typename T> struct is_occupiable_impl<T *> {
-  static bool check(const T *t) { return t->isOccupied(); }
-};
-
-// Specialization for smart pointer types like std::shared_ptr.
-template <typename T> struct is_occupiable_impl<std::shared_ptr<T>> {
-  static bool check(const std::shared_ptr<T> &t) { return t->isOccupied(); }
-};
-
-template <typename T>
-concept Occupiable = requires(T t) {
-  { is_occupiable_impl<T>::check(t) } -> std::convertible_to<bool>;
-};
 
 // Heuristics used to calculate cost / distance differently.
 enum class HeuristicType { Manhattan, Chebyshev, Euclidean };
@@ -81,16 +62,16 @@ struct CompareNode {
 
 template <Occupiable T> class AStar {
 public:
-  AStar(std::vector<std::vector<T>> &grid, bool allow_diagonal,
+  AStar(std::unique_ptr<Grid<T>> grid, bool allow_diagonal = false,
         bool wrap = false, HeuristicType ht = HeuristicType::Manhattan)
-      : wrap(wrap), grid(grid), heuristic(HeuristicFunction::getHeuristic(ht)) {
-    if (grid.size() == 0 || grid[0].size() == 0) {
-      throw new std::runtime_error("Invalid dimensions for grid provided.");
+      : grid(std::move(grid)), wrap(wrap),
+        heuristic(HeuristicFunction::getHeuristic(ht)) {
+    Vec2i dimensions = this->grid->getDimensions();
+    if (dimensions.x == 0 || dimensions.y == 0) {
+      throw std::runtime_error("Invalid dimensions for grid provided.");
     }
 
-    height = grid.size();
-    width = grid[0].size();
-
+    // Set the diagonal ability.
     offsets = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
     if (allow_diagonal) {
       std::vector<Vec2i> ext = {{1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
@@ -103,7 +84,7 @@ public:
 
   // Finds the path from start to end.
   std::vector<Vec2i> findPath(const Vec2i &start, const Vec2i &end) {
-    if (!isValid(start) || !isValid(end)) {
+    if (!grid->isValid(start) || !grid->isValid(end)) {
       throw new std::runtime_error(
           "Invalid start or end position for pathfinding.");
     }
@@ -127,7 +108,7 @@ public:
       // Explore the neighbors of the current node.
       for (Vec2i neighbor_pos : getNeighbors(current->position)) {
         if (is_occupiable_impl<T>::check(
-                grid[neighbor_pos.y][neighbor_pos.x])) {
+                grid->at(neighbor_pos.x, neighbor_pos.y))) {
           continue;
         }
 
@@ -147,10 +128,10 @@ public:
   }
 
 private:
-  int height, width;                // Dimensions of the inner grid.
-  bool wrap;                        // Allow looping around borders of the grid.
-  std::vector<std::vector<T>> grid; // Grid being processed.
-  std::vector<Vec2i> offsets;       // Offsets to get neighboring cells.
+  int height, width;             // Dimensions of the inner grid.
+  bool wrap;                     // Allow looping around borders of the grid.
+  std::unique_ptr<Grid<T>> grid; // Grid being processed.
+  std::vector<Vec2i> offsets;    // Offsets to get neighboring cells.
   std::function<int(Vec2i, Vec2i)> heuristic; // Heuristic for distance / cost.
 
   // Obtains all neighbors to the position while respecting grid boundaries.
@@ -163,18 +144,12 @@ private:
         neighbor.x = (neighbor.x + width) % width;
         neighbor.y = (neighbor.y + height) % height;
         neighbors.push_back(neighbor);
-      } else if (isValid(neighbor)) {
+      } else if (grid->isValid(neighbor)) {
         neighbors.push_back(neighbor);
       }
     }
 
     return neighbors;
-  }
-
-  // Validates that the position is within the grid.
-  inline bool isValid(const Vec2i &position) {
-    return position.x >= 0 && position.x < width && position.y >= 0 &&
-           position.y < height;
   }
 
   // Reconstructs the path starting at the current node to the start.

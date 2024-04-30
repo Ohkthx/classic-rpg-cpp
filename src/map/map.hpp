@@ -59,7 +59,6 @@ public:
     }
   }
 
-  // Obtains the path from the source to destination.
   std::queue<Vec2i> pathfind(Vec2i src, Vec2i dest) {
     // Check bounds and ensure movement is possible.
     if (!inBounds(src.x, src.y) || !inBounds(dest.x, dest.y) ||
@@ -67,20 +66,14 @@ public:
       return std::queue<Vec2i>();
     }
 
-    // Create a grid the A* can use.
-    std::vector<std::vector<std::shared_ptr<Tile>>> grid(
-        _height, std::vector<std::shared_ptr<Tile>>(_width));
-    for (int y = 0; y < _height; ++y) {
-      for (int x = 0; x < _width; ++x) {
-        grid[y][x] = at(x, y);
-      }
-    }
+    // Wrap the map data for processing.
+    auto grid = std::make_unique<pathfind::LinearGrid<std::shared_ptr<Tile>>>(
+        data, _width);
 
-    // Find the path between the source and destination.
-    pathfind::AStar<std::shared_ptr<Tile>> astar(grid, false);
-    std::vector<Vec2i> path_vec = astar.findPath(src, dest);
+    pathfind::AStar<std::shared_ptr<Tile>> astar(std::move(grid), false);
 
     // Find the path using the A* algorithm.
+    std::vector<Vec2i> path_vec = astar.findPath(src, dest);
     std::queue<Vec2i> path_queue;
     for (auto &step : path_vec) {
       path_queue.push(step);
