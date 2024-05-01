@@ -2,7 +2,7 @@
 #define _ALGO_EXAMPLES_HPP
 
 #include "../generation/terrain/wfc.hpp"
-#include "../pathfinding/astar.hpp"
+#include "../pathfind/pathfind.hpp"
 #include "../tick.hpp"
 #include <iostream>
 

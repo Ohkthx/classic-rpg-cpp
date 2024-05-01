@@ -1,13 +1,15 @@
-#ifndef _GAME_OBJECT_HPP
-#define _GAME_OBJECT_HPP
+#ifndef _CORE_GAME_OBJECT_HPP
+#define _CORE_GAME_OBJECT_HPP
 
-#include "../ecs/world.hpp"
+#include "../ecs/ecs.hpp"
 #include "../map/map.hpp"
-#include "../pathfinding/util.hpp"
+#include "../pathfind/pathfind.hpp"
 #include "../tick.hpp"
 #include "../ui/camera.hpp"
 #include "../util/log.hpp"
 #include <random>
+
+namespace core {
 
 class GameObject {
 private:
@@ -30,5 +32,7 @@ public:
   void registerSystem(std::function<void(ecs::World &, MapData &)> system);
   void start(); // Starts the game loop.
 };
+
+} // namespace core
 
 #endif

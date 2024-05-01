@@ -1,5 +1,5 @@
-#ifndef _WFC_RULESET_HPP
-#define _WFC_RULESET_HPP
+#ifndef _WAVE_FUNCTION_COLLAPSE_RULESET_HPP
+#define _WAVE_FUNCTION_COLLAPSE_RULESET_HPP
 
 #include <algorithm>
 #include <map>

@@ -1,8 +1,12 @@
-#ifndef _GAME_OBJECT_COMPONENTS_HPP
-#define _GAME_OBJECT_COMPONENTS_HPP
+#ifndef _CORE_COMPONENTS_HPP
+#define _CORE_COMPONENTS_HPP
 
-#include "../ecs/component.hpp"
+#include "../ecs/ecs.hpp"
+#include "../pathfind/pathfind.hpp"
 #include <optional>
+#include <queue>
+
+namespace core {
 
 struct PathComponent : public ecs::Component {
   std::queue<Vec2i> path;
@@ -30,5 +34,7 @@ struct PositionComponent : public ecs::Component, public Vec2i {
     return *this;
   }
 };
+
+} // namespace core
 
 #endif

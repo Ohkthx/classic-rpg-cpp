@@ -2,7 +2,7 @@
 #define _UI_CAMERA_HPP
 
 #include "../map/map.hpp"
-#include "../pathfinding/util.hpp"
+#include "../pathfind/pathfind.hpp"
 #include "../util/log.hpp"
 
 class Camera {

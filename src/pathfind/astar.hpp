@@ -1,5 +1,5 @@
-#ifndef _ASTAR_HPP
-#define _ASTAR_HPP
+#ifndef _PATHFIND_ASTAR_HPP
+#define _PATHFIND_ASTAR_HPP
 
 #include "grid.hpp"
 #include "util.hpp"

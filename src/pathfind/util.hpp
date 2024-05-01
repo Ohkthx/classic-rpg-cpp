@@ -1,5 +1,5 @@
-#ifndef _PATHFINDING_UTIL_HPP
-#define _PATHFINDING_UTIL_HPP
+#ifndef _PATHFIND_UTIL_HPP
+#define _PATHFIND_UTIL_HPP
 
 #include <functional>
 #include <type_traits>

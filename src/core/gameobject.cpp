@@ -1,6 +1,8 @@
-#include "gameobj.hpp"
+#include "gameobject.hpp"
 #include "../input.hpp"
 #include "components.hpp"
+
+namespace core {
 
 GameObject::GameObject(std::mt19937 &rng, int width, int height)
     : rng(rng), map(MapData(rng, height, width)),
@@ -66,3 +68,5 @@ void GameObject::start() {
     ticks.tick();
   }
 }
+
+} // namespace core

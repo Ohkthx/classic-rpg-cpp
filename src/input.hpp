@@ -1,7 +1,7 @@
 #ifndef _INPUT_HPP
 #define _INPUT_HPP
 
-#include "pathfinding/util.hpp"
+#include "pathfind/pathfind.hpp"
 
 class Input {
 public:

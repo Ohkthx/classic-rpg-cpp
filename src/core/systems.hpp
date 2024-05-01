@@ -1,9 +1,11 @@
-#ifndef _GAME_OBJECT_SYSTEMS_HPP
-#define _GAME_OBJECT_SYSTEMS_HPP
+#ifndef _CORE_SYSTEMS_HPP
+#define _CORE_SYSTEMS_HPP
 
-#include "../ecs/world.hpp"
+#include "../ecs/ecs.hpp"
 #include "../map/map.hpp"
 #include "components.hpp"
+
+namespace core {
 
 // Selects a random path for all entities that are currently pathfinding.
 void pathfinder(ecs::World &world, MapData &map) {
@@ -21,5 +23,7 @@ void pathfinder(ecs::World &world, MapData &map) {
     }
   }
 }
+
+} // namespace core
 
 #endif

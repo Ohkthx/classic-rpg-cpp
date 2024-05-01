@@ -2,8 +2,7 @@
 #define _MAP_DATA_HPP
 
 #include "../generation/terrain/wfc.hpp"
-#include "../pathfinding/astar.hpp"
-#include "../pathfinding/util.hpp"
+#include "../pathfind/pathfind.hpp"
 #include "../tileset.hpp"
 #include "tile.hpp"
 #include <memory>
