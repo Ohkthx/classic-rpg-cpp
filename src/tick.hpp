@@ -16,6 +16,15 @@ public:
   // Returns the number of ticks that have occurred.
   std::size_t getTick() const { return tick_count; }
 
+  // Resets the internal tick data.
+  void restart() { start(); }
+
+  // Resets the internal tick data.
+  void start() {
+    last_tick = std::chrono::steady_clock::now();
+    tick_count = 0;
+  }
+
   // Proceeds the controller to the next tick, ensuring it happens at the
   // correct interval.
   void tick() {

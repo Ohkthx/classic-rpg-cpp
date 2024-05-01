@@ -13,6 +13,7 @@
 
 class MapData {
 public:
+  std::mt19937 rng;
   std::vector<std::shared_ptr<Tile>> data;
   int _width, _height;
 
@@ -83,8 +84,6 @@ public:
   }
 
 private:
-  std::mt19937 rng;
-
   // Applies a collapsed wave and expands its results into a larger map.
   void applyWave(wfc::Wave<int> wave) {
     int height = wave.size();

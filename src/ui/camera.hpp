@@ -12,14 +12,14 @@ public:
             const std::vector<LogEntry> &bottom_log);
 
 private:
-  int width;
-  int height;
+  int width, height; // Dimensions of the camera / terminal.
   const double RHS_SPACE = 0.2, LHS_SPACE = 0.2;
 
   static void clearView();       // Clears the screen.
   void setViewSize();            // Sets the width/height of the view.
   int getMapHeight(std::size_t); // Gets the height based on text offset.
   int getMapWidth(std::size_t);  // Gets the width based on text offset.
+  inline void resetCursor();     // Resets cursor to the top of the terminal.
 };
 
 #endif

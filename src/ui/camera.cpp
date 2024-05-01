@@ -35,7 +35,7 @@ void Camera::clearView() {
 #endif
 }
 
-void resetCursor() { std::cout << "\033[0;0H"; }
+inline void Camera::resetCursor() { std::cout << "\033[0;0H"; }
 
 int Camera::getMapWidth(std::size_t line_count) {
   return line_count == 0 ? width : static_cast<int>(width * (1.0 - RHS_SPACE));
